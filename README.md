@@ -28,5 +28,5 @@ Equipo TIC – New Stetic
 ---
 
 Este repositorio corresponde al microservicio **Seguimiento OCN (NPO Follow Up)** dentro del ecosistema **BuyOrder**.
-```
+
 
