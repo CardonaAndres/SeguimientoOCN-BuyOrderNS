@@ -1,36 +1,31 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
+import { Controller, Get, Query, UseGuards } from '@nestjs/common';
 import { PurchaseOrdersService } from './purchase-orders.service';
-import { CreatePurchaseOrderDto } from './dto/create-purchase-order.dto';
-import { UpdatePurchaseOrderDto } from './dto/update-purchase-order.dto';
 import { AuthGuard } from 'src/auth/guards/auth.guard';
+import { errorHandler } from 'src/app/handlers/error.handler';
+import { PaginationDto } from 'src/app/dtos/pagination.dto';
+import { SearchDTO } from 'src/app/dtos/search.dto';
 
 @UseGuards(AuthGuard)
 @Controller('np-orders')
 export class PurchaseOrdersController {
   constructor(private readonly purchaseOrdersService: PurchaseOrdersService) {}
 
-  @Post()
-  create(@Body() createPurchaseOrderDto: CreatePurchaseOrderDto) {
-    return this.purchaseOrdersService.create(createPurchaseOrderDto);
-  }
-
   @Get()
-  findAll() {
-    return this.purchaseOrdersService.findAll();
+  async findAll(@Query() pagination: PaginationDto) {
+    try {
+      return await this.purchaseOrdersService.getAll(pagination)
+    } catch (err) {
+      errorHandler(err);
+    }
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.purchaseOrdersService.findOne(+id);
+  @Get('/search')
+  async findOrders(@Query() filters: SearchDTO){
+    try {
+      return await this.purchaseOrdersService.searchNpo(filters);
+    } catch (err) {
+      errorHandler(err);
+    }
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updatePurchaseOrderDto: UpdatePurchaseOrderDto) {
-    return this.purchaseOrdersService.update(+id, updatePurchaseOrderDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.purchaseOrdersService.remove(+id);
-  }
 }
