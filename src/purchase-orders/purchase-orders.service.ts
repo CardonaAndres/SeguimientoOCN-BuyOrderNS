@@ -33,7 +33,8 @@ export class PurchaseOrdersService {
       meta: {
         page: pagination.page,
         limit: pagination.limit,
-        total: npoTotal?.recordset[0].totalNPO
+        total: npoTotal?.recordset[0].totalNPO,
+        totalPages: Math.ceil((npoTotal?.recordset[0].totalNPO || 0) / pagination.limit)
       }
     }
   }
@@ -101,7 +102,8 @@ export class PurchaseOrdersService {
       meta: {
         page,
         limit,
-        total: npoTotal?.recordset[0].totalNPO ?? 0
+        total: npoTotal?.recordset[0].totalNPO ?? 0,
+        totalPages: Math.ceil((npoTotal?.recordset[0].totalNPO || 0) / limit)
       }
     }
   }
