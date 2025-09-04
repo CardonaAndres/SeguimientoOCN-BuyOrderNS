@@ -5,6 +5,7 @@ import { DatabaseService } from 'src/app/database/database.service';
 import { PaginationDto } from 'src/app/dtos/pagination.dto';
 import { SearchDTO } from 'src/app/dtos/search.dto';
 import { Time } from 'src/app/types/global.types';
+import { UtilClass } from './utils/util';
 
 @Injectable()
 export class PurchaseOrdersService {
@@ -21,10 +22,7 @@ export class PurchaseOrdersService {
        OFFSET (@page - 1) * @limit ROWS FETCH NEXT @limit ROWS ONLY;
       `);
 
-    results?.recordset.map(order => {
-      const emails = order.EmailProveedor.split(';').map((e: string) => e.replace(/\s+/g, '').trim());
-      order.emails = emails;  
-    });
+    results?.recordset.map(order => order.emails = UtilClass.parseEmailList(order.EmailProveedor));
 
     const npoTotal = await conn?.request().query(`${queries.getTotalNpOrders}`);
 
@@ -125,6 +123,7 @@ export class PurchaseOrdersService {
       item.Referencia = item.Referencia.trim();
       item.CodigoProveedor = item.CodigoProveedor.trim();
       item.CodigoBodega = item.CodigoBodega.trim();
+      item.emails = UtilClass.parseEmailList(item.EmailProveedor)
     });
 
     return {
