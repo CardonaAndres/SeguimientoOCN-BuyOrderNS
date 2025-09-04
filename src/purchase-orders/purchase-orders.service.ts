@@ -93,8 +93,15 @@ export class PurchaseOrdersService {
       totalRequest?.input(key, val);
     }
 
-    const results = await request?.query(`${queries.getAllNpOrders} ${where} ORDER BY FechaEntrega ASC`);
+    request?.input('page', mssql.Int, page).input('limit', mssql.Int, limit)
+
     const npoTotal = await totalRequest?.query(queries.getTotalNpOrders.replace('/**MORE_WHERE_CLAUSE**/', where));
+    const results = await request?.query(`
+      ${queries.getAllNpOrders} 
+      ${where} 
+      ORDER BY FechaEntrega ASC
+      OFFSET (@page - 1) * @limit ROWS FETCH NEXT @limit ROWS ONLY;
+    `);
 
     return {
       message: 'Ordenes de compra encontradas',
