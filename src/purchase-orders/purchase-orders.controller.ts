@@ -1,4 +1,4 @@
-import { Controller, Get, Query, UseGuards } from '@nestjs/common';
+import { Controller, Get, Param, Query, UseGuards } from '@nestjs/common';
 import { PurchaseOrdersService } from './purchase-orders.service';
 import { AuthGuard } from 'src/auth/guards/auth.guard';
 import { errorHandler } from 'src/app/handlers/error.handler';
@@ -26,6 +26,16 @@ export class PurchaseOrdersController {
   async findOrders(@Query() filters: SearchDTO){
     try {
       return await this.purchaseOrdersService.searchNpo(filters);
+    } catch (err) {
+      errorHandler(err);
+    }
+  }
+
+  @Get('/one/items/:consec_docto')
+  @ApiResponse({ status: 200, description: 'Listado de los items de una órden de compra nacional.' })
+  async findItemsByOrder(@Param('consec_docto') id: string){
+    try {
+      return await this.purchaseOrdersService.getOrderItems(id);
     } catch (err) {
       errorHandler(err);
     }

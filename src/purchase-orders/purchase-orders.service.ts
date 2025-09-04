@@ -115,4 +115,25 @@ export class PurchaseOrdersService {
     }
   }
 
+  async getOrderItems(id: string){
+    const conn = await this.dbService.connect(process.env.DB_COMP_NAME || 'localhost');
+    const resultsItems = await conn?.request()
+    .input('consecDocto', mssql.VarChar, id)
+    .query(`${queries.getOrdersItems} AND t_docto.f420_consec_docto = @consecDocto ORDER BY items.f120_referencia;`);
+
+    resultsItems?.recordset.map(item => {
+      item.Referencia = item.Referencia.trim();
+      item.CodigoProveedor = item.CodigoProveedor.trim();
+      item.CodigoBodega = item.CodigoBodega.trim();
+    });
+
+    return {
+      message: `Todos los items de la orden: ${id}`,
+      items: resultsItems?.recordset,
+      meta: {
+        total: resultsItems?.recordset.length
+      }
+    }
+  }
+
 }
