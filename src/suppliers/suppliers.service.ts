@@ -1,8 +1,8 @@
+import * as mssql from 'mssql';
+import * as queries from './queries/queries';
 import { Injectable } from '@nestjs/common';
 import { DatabaseService } from 'src/app/database/database.service';
-import { PaginationDto } from 'src/app/dtos/pagination.dto';
-import * as queries from './queries/queries';
-import * as mssql from 'mssql';
+import { PaginationDto } from 'src/app/dtos/pagination.dto'
 import { UtilClass } from 'src/purchase-orders/utils/util';
 import { SearchSuppliersDto } from './dto/search-suppliers.dto';
 
