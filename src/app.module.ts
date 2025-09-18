@@ -4,6 +4,7 @@ import { DatabaseModule } from './app/database/database.module';
 import { PurchaseOrdersModule } from './purchase-orders/purchase-orders.module';
 import { AuthModule } from './auth/auth.module';
 import { SuppliersModule } from './suppliers/suppliers.module';
+import { EmailModule } from './email/email.module';
 
 @Module({
   imports: [
@@ -15,6 +16,7 @@ import { SuppliersModule } from './suppliers/suppliers.module';
     DatabaseModule,
     PurchaseOrdersModule,
     SuppliersModule,
+    EmailModule,
   ],
   controllers: [],
   providers: [],
