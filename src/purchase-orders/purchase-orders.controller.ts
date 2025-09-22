@@ -4,8 +4,9 @@ import { AuthGuard } from 'src/auth/guards/auth.guard';
 import { errorHandler } from 'src/app/handlers/error.handler';
 import { PaginationDto } from 'src/app/dtos/pagination.dto';
 import { SearchDTO } from 'src/app/dtos/search.dto';
-import { ApiResponse } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiResponse } from '@nestjs/swagger';
 
+@ApiBearerAuth() 
 @UseGuards(AuthGuard)
 @Controller('np-orders')
 export class PurchaseOrdersController {

@@ -5,6 +5,7 @@ import { PurchaseOrdersModule } from './purchase-orders/purchase-orders.module';
 import { AuthModule } from './auth/auth.module';
 import { SuppliersModule } from './suppliers/suppliers.module';
 import { EmailModule } from './email/email.module';
+import { SupplierOrdersModule } from './supplier-orders/supplier-orders.module';
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import { EmailModule } from './email/email.module';
     PurchaseOrdersModule,
     SuppliersModule,
     EmailModule,
+    SupplierOrdersModule,
   ],
   controllers: [],
   providers: [],

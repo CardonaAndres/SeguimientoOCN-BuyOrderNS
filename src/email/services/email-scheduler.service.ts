@@ -10,13 +10,12 @@ export class EmailSchedulerService {
 
   @Cron('* * * * *', { name: 'mass-email', timeZone: 'America/Bogota' })
   async handleMassEmailCampaign() {
-    this.logger.log('Iniciando campaña de correos masivos...');
-    
+
     try {
-      await this.emailService.sendMassEmails();
-      this.logger.log('Campaña de correos completada exitosamente');
+      // await this.emailService.sendMassEmails();
     } catch (error) {
       this.logger.error('Error en campaña de correos:', error);
     }
+    
   }
 }

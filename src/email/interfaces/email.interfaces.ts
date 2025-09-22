@@ -30,3 +30,9 @@ export interface EmailError {
   emails: string[];  // Emails que fallaron
   error: string;     // Mensaje de error
 }
+
+export interface MagicTokenPayload {
+  razonSocial: string
+  iat: number;   
+  exp?: number;       
+}
