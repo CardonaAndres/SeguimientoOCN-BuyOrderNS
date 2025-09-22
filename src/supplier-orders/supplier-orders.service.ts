@@ -8,7 +8,7 @@ import * as npoQueries from '../purchase-orders/queries/npo.queries';
 export class SupplierOrdersService {
   constructor(private readonly dbService: DatabaseService){}
 
-  async findAllByToken(token: string) {
+  async findAllNPOByToken(token: string) {
     const { razonSocial } = MagicTokenUtil.verifyToken(token);
 
     const conn = await this.dbService.connect(process.env.DB_COMP_NAME || 'localhost');
