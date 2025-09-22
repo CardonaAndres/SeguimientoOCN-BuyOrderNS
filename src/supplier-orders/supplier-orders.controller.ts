@@ -13,7 +13,7 @@ export class SupplierOrdersController {
       const { razonSocial } = MagicTokenUtil.verifyToken(token);
       return { valid: true, supplier: razonSocial };
     } catch (err) {
-      return { valid: false, error: err.message };
+      errorHandler(err)
     }
   }
 

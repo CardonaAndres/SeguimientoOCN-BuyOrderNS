@@ -12,7 +12,7 @@ export class EmailSchedulerService {
   async handleMassEmailCampaign() {
 
     try {
-      // await this.emailService.sendMassEmails();
+      await this.emailService.sendMassEmails();
     } catch (error) {
       this.logger.error('Error en campaña de correos:', error);
     }

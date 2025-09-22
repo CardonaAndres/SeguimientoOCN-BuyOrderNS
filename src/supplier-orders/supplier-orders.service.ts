@@ -1,5 +1,6 @@
 import mssql from 'mssql';
 import { Injectable } from '@nestjs/common';
+import { UtilClass } from 'src/app/utils/util';
 import { MagicTokenUtil } from 'src/email/utils/magic-token.util';
 import { DatabaseService } from 'src/app/database/database.service';
 import * as npoQueries from '../purchase-orders/queries/npo.queries';
@@ -17,6 +18,8 @@ export class SupplierOrdersService {
     .query(`${npoQueries.getAllNpOrders} 
       AND proveedor.f200_razon_social = @supplierName
     `);
+
+    npos?.recordset.map(order => order.emails = UtilClass.parseEmailList(order.EmailProveedor));
 
     return {
       supplierName: razonSocial,
