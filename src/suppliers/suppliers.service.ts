@@ -3,7 +3,7 @@ import * as queries from './queries/queries';
 import { Injectable } from '@nestjs/common';
 import { DatabaseService } from 'src/app/database/database.service';
 import { PaginationDto } from 'src/app/dtos/pagination.dto'
-import { UtilClass } from 'src/purchase-orders/utils/util';
+import { UtilClass } from 'src/app/utils/util';
 import { SearchSuppliersDto } from './dto/search-suppliers.dto';
 
 @Injectable()

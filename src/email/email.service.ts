@@ -1,19 +1,35 @@
+import * as mssql from 'mssql';
+import * as queries from '../suppliers/queries/queries';
 import { Injectable, Logger } from '@nestjs/common';
 import { EmailWorkerManager } from './utils/email-worker.manager';
 import { BatchProcessorService } from './services/batch-processor.service';
+import { DatabaseService } from 'src/app/database/database.service';
+import { DatabaseEmailGroup } from './interfaces/email.interfaces';
 
 @Injectable()
 export class EmailService {
   private readonly logger = new Logger(EmailService.name);
 
   constructor(
+    private readonly dbService: DatabaseService,
     private readonly workerManager: EmailWorkerManager,
     private readonly batchProcessor: BatchProcessorService,
   ) {}
 
   async sendMassEmails(): Promise<void> {
     // Obtener datos de la base de datos
-    const databaseGroups = []
+    const conn = await this.dbService.connect(process.env.DB_COMP_NAME || 'localhost'); 
+    const results = await conn?.request()
+     .query<DatabaseEmailGroup[]>(`USE UNOEE ${queries.getAllSuppliers} ORDER BY RazonSocial`);
+
+    // const databaseGroups: DatabaseEmailGroup[] = results?.recordset || [];
+
+    const databaseGroups = [
+      {
+        RazonSocial: "Area de TIC | New Stetic S.A",
+        EmailsString: "amjimenez@newstetic.com,ptic2@newstetic.com"
+      }
+    ];
 
     // Transformar al formato requerido por el worker
     const emailGroups = this.batchProcessor.transformDatabaseGroups(databaseGroups);
@@ -26,7 +42,7 @@ export class EmailService {
     // Procesar cada lote con pausa entre ellos
     for (let i = 0; i < batches.length; i++) {
       //! DESCOMENTAR LA LINEA 29 PARA EL ENVIO DE LOS CORREOS
-      // await this.workerManager.processEmailBatch(batches[i], i + 1);
+      await this.workerManager.processEmailBatch(batches[i], i + 1);
       
       // Pausa entre lotes para evitar sobrecarga del servidor SMTP
       if (i < batches.length - 1) 

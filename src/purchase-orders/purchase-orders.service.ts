@@ -5,7 +5,7 @@ import { DatabaseService } from 'src/app/database/database.service';
 import { PaginationDto } from 'src/app/dtos/pagination.dto';
 import { SearchDTO } from 'src/app/dtos/search.dto';
 import { Time } from 'src/app/types/global.types';
-import { UtilClass } from './utils/util';
+import { UtilClass } from '../app/utils/util';
 
 @Injectable()
 export class PurchaseOrdersService {

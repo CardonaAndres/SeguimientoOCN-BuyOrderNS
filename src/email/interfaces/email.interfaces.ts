@@ -2,9 +2,8 @@
  * Estructura de datos que viene de la base de datos
  */
 export interface DatabaseEmailGroup {
-  id: number;
-  name: string;
-  emails: string[]; 
+  RazonSocial: string;
+  EmailsString: string; 
 }
 
 

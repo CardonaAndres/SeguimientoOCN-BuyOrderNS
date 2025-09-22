@@ -78,7 +78,6 @@ export class EmailWorkerManager {
     if (result.errors && result.errors?.length > 0) 
       this.logger.warn(`Errores en lote ${result.batchNumber}: ${result.errors.length} fallos`);
     
-
     if (result.error) 
       this.logger.error(`Error general en lote ${result.batchNumber}: ${result.error}`);
   }
