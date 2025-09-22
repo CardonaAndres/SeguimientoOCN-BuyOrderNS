@@ -1,4 +1,3 @@
-import * as mssql from 'mssql';
 import * as queries from '../suppliers/queries/queries';
 import { Injectable, Logger } from '@nestjs/common';
 import { EmailWorkerManager } from './utils/email-worker.manager';
@@ -22,11 +21,12 @@ export class EmailService {
     const results = await conn?.request()
      .query<DatabaseEmailGroup[]>(`USE UNOEE ${queries.getAllSuppliers} ORDER BY RazonSocial`);
 
+     // ! A LA HORA DE PASAR A PRODUCCIÓN DESCOMENTAR LA LINEA 25 Y ELIMINAR LA 27
     // const databaseGroups: DatabaseEmailGroup[] = results?.recordset || [];
 
     const databaseGroups = [
       {
-        RazonSocial: "Area de TIC | New Stetic S.A",
+        RazonSocial: "LABORATORIOS HIGIETEX S.A.S",
         EmailsString: "amjimenez@newstetic.com,ptic2@newstetic.com"
       }
     ];
@@ -41,7 +41,7 @@ export class EmailService {
     
     // Procesar cada lote con pausa entre ellos
     for (let i = 0; i < batches.length; i++) {
-      //! DESCOMENTAR LA LINEA 29 PARA EL ENVIO DE LOS CORREOS
+      
       await this.workerManager.processEmailBatch(batches[i], i + 1);
       
       // Pausa entre lotes para evitar sobrecarga del servidor SMTP

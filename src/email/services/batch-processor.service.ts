@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { DatabaseEmailGroup, EmailGroup } from '../interfaces/email.interfaces';
 import { UtilClass } from 'src/app/utils/util';
+import { DatabaseEmailGroup, EmailGroup } from '../interfaces/email.interfaces';
 
 @Injectable()
 export class BatchProcessorService {
@@ -25,17 +25,10 @@ export class BatchProcessorService {
    * Simplifica la estructura y mantiene solo los datos necesarios
    */
   transformDatabaseGroups(databaseGroups: DatabaseEmailGroup[]): EmailGroup[] {
-    const emailGroups = databaseGroups.map(group => {
-      const emailsArr = UtilClass.parseEmailList(group.EmailsString)
-
-      return {
+    return databaseGroups.map(group => ({
         groupName: group.RazonSocial,
-        emails: emailsArr
-      }
-
-    });
-
-    return emailGroups;
+        emails: UtilClass.parseEmailList(group.EmailsString)
+    })); 
   }
 
   /**

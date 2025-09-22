@@ -1,5 +1,6 @@
 const { parentPort, workerData } = require('worker_threads');
-const { generatePendingOrdersTemplate } = require('./generatePendingOrdersTemplate');
+const { createMagicToken } = require('./utils/magicToken');
+const { generatePendingOrdersTemplate } = require('./utils/generatePendingOrdersTemplate');
 
 let nodemailer;
 
@@ -43,14 +44,20 @@ async function sendGroupedEmails(emailGroups, batchNumber) {
   const errors = [];
 
   for (let i = 0; i < emailGroups.length; i++) {
-    const group = emailGroups[i];
-    
+
+    const group = emailGroups[i];   
+    const token = createMagicToken(group.groupName);
+
     try {
       await transporter.sendMail({
         from: `"${process.env.SMTP_FROM_NAME}" <${process.env.SMTP_FROM_EMAIL}>`,
         to: group.emails.join(', '),
         subject: 'Recordatorio de órdenes pendientes por entrega',
-        html: generatePendingOrdersTemplate(group.groupName || 'Proveedor'),
+        html: generatePendingOrdersTemplate(
+          group.groupName || 'Proveedor',
+          process.env.BUYORDER_CLIENT || 'http://localhost:5001',
+          token
+        ),
       });
       
       sent++;

@@ -1,9 +1,11 @@
-function generatePendingOrdersTemplate(providerName) {
+const generatePendingOrdersTemplate = (providerName, clientUrl, magicToken = "") => {
   const currentDate = new Date().toLocaleDateString('es-ES', {
     year: 'numeric',
     month: 'long',
     day: 'numeric'
   });
+
+  const magicLink = `${clientUrl}/orders/view/${magicToken}`;
 
   return `
     <!DOCTYPE html>
@@ -54,6 +56,23 @@ function generatePendingOrdersTemplate(providerName) {
                 color: #000000;
                 font-size: 18px;
             }
+            .magic-link {
+                text-align: center;
+                margin: 30px 0;
+            }
+            .magic-button {
+                display: inline-block;
+                background-color: rgba(0, 163, 180, 1);
+                color: white;
+                padding: 15px 30px;
+                text-decoration: none;
+                border-radius: 5px;
+                font-weight: bold;
+                font-size: 16px;
+            }
+            .magic-button:hover {
+                background-color: rgba(0, 140, 155, 1);
+            }
             .footer {
                 border-top: 2px solid rgba(0, 163, 180, 1);
                 padding-top: 20px;
@@ -78,7 +97,7 @@ function generatePendingOrdersTemplate(providerName) {
     <body>
         <div class="container">
             <div class="header">
-                <h1>NewStetic</h1>
+                <h1>New Stetic</h1>
             </div>
             
             <div class="content">
@@ -93,12 +112,32 @@ function generatePendingOrdersTemplate(providerName) {
                 <div class="provider-info">
                     <div class="provider-name">Proveedor: ${providerName.toUpperCase()}</div>
                 </div>
+
+                <div class="magic-link">
+                    <p><strong>Para confirmar o actualizar el estado de sus órdenes, haga clic en el siguiente enlace:</strong></p>
+                    <a 
+                     href="${magicLink}" 
+                     target="_blank" 
+                     style="
+                        display: inline-block;
+                        background-color: rgba(0, 163, 180, 1);
+                        color: #ffffff !important;
+                        padding: 15px 30px;
+                        text-decoration: none;
+                        border-radius: 5px;
+                        font-weight: bold;
+                        font-size: 16px;
+                     "
+                    >
+                        Confirmar Órdenes
+                    </a>
+                </div>
             </div>
             
             <div class="footer">
                 <div class="signature">
                     Atentamente,<br>
-                    <strong>Departamento de Compras NewStetic</strong>
+                    <strong>Departamento de Compras New Stetic</strong>
                 </div>
             </div>
         </div>
