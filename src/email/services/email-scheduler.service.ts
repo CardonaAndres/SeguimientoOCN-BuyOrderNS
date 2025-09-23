@@ -8,11 +8,11 @@ export class EmailSchedulerService {
 
   constructor(private emailService: EmailService) {}
 
-  @Cron('* * * * *', { name: 'mass-email', timeZone: 'America/Bogota' })
+  @Cron('0 11 * * 2,4', { name: 'mass-email', timeZone: 'America/Bogota' })
   async handleMassEmailCampaign() {
 
     try {
-      // await this.emailService.sendMassEmails();
+      await this.emailService.sendMassEmails();
     } catch (error) {
       this.logger.error('Error en campaña de correos:', error);
     }

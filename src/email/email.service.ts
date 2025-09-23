@@ -28,10 +28,6 @@ export class EmailService {
       {
         RazonSocial: "LABORATORIOS HIGIETEX S.A.S",
         EmailsString: "amjimenez@newstetic.com,ptic2@newstetic.com"
-      },
-      {
-        RazonSocial: "ANNAR DIAGNOSTICA IMPORT S A S",
-        EmailsString: "amjimenez@newstetic.com,ptic2@newstetic.com"  
       }
     ];
 
