@@ -1,29 +1,77 @@
+import { TokenGuard } from './guards/token.guard';
+import { ApiParam, ApiResponse } from '@nestjs/swagger';
 import { errorHandler } from 'src/app/handlers/error.handler';
 import { SupplierOrdersService } from './supplier-orders.service';
-import { Controller, Get, Param } from '@nestjs/common';
 import { MagicTokenUtil } from 'src/email/utils/magic-token.util';
+import { Controller, Get, Param, UseGuards, Req } from '@nestjs/common';
+import type { SupplierRequest } from './interfaces/supplier-request.interface';
 
+@UseGuards(TokenGuard) 
 @Controller('supplier-orders')
 export class SupplierOrdersController {
   constructor(private readonly supplierOrdersService: SupplierOrdersService) {}
 
   @Get('validate/:token')
+  @ApiParam({
+    name: 'token',
+    description: 'Token mágico de validación del proveedor',
+    type: String,
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Token válido. Devuelve información del proveedor.',
+  })
+  @ApiResponse({
+    status: 401,
+    description: 'Token inválido o expirado',
+  })
   async validateToken(@Param('token') token: string) {
     try {
       const { razonSocial } = MagicTokenUtil.verifyToken(token);
       return { valid: true, supplier: razonSocial };
     } catch (err) {
-      errorHandler(err)
+      errorHandler(err);
     }
   }
 
   @Get('/pending/:token')
-  async findAllByToken(@Param('token') token: string) {
+  @ApiParam({
+    name: 'token',
+    description: 'Token mágico de validación del proveedor',
+    type: String,
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Listado de órdenes de compra pendientes',
+  })
+  async findAllByToken(@Req() req: SupplierRequest) {
     try {
-      return await this.supplierOrdersService.findAllNPOByToken(token);
+      return await this.supplierOrdersService.findAllNPOByToken(req);
     } catch (err) {
       errorHandler(err);
     }
   }
 
+  @Get('/pending/:token/:consec_docto')
+  @ApiParam({
+    name: 'token',
+    description: 'Token mágico de validación del proveedor',
+    type: String,
+  })
+  @ApiParam({
+    name: 'consec_docto',
+    description: 'Consecutivo de la orden de compra nacional',
+    type: String,
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Listado de los ítems de una orden de compra nacional de un proveedor.',
+  })
+  async findNpoItems(@Param('consec_docto') id: string) {
+    try {
+      return await this.supplierOrdersService.getNpoItems(id);
+    } catch (err) {
+      errorHandler(err);
+    }
+  }
 }
