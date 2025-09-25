@@ -10,6 +10,7 @@ export class DatabaseService {
     constructor(private readonly configService: ConfigService) {
         this.databases = [
             String(this.configService.get<string>('DB_COMP_NAME')),
+            String(this.configService.get<string>('DB_BUYORDER_NAME')),
         ];
     }
 
@@ -29,6 +30,18 @@ export class DatabaseService {
                     server: this.configService.getOrThrow<string>('DB_COMP_SERVER'),
                     options: {
                         encrypt: true,
+                        trustServerCertificate: true,
+                    },
+                };
+            break; 
+
+            case String(this.configService.get<string>('DB_BUYORDER_NAME')):
+                config = {
+                    user: this.configService.get<string>('DB_BUYORDER_USER'),
+                    password: this.configService.get<string>('DB_BUYORDER_PASSWORD'),
+                    server: this.configService.getOrThrow<string>('DB_BUYORDER_SERVER'),
+                    options: {
+                        encrypt: false,
                         trustServerCertificate: true,
                     },
                 };

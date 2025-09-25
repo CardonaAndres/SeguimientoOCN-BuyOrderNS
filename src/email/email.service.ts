@@ -24,12 +24,10 @@ export class EmailService {
      // ! A LA HORA DE PASAR A PRODUCCIÓN DESCOMENTAR LA LINEA 25 Y ELIMINAR LA 27
     // const databaseGroups: DatabaseEmailGroup[] = results?.recordset || [];
 
-    const databaseGroups = [
-      {
-        RazonSocial: "LABORATORIOS HIGIETEX S.A.S",
-        EmailsString: "ptic2@newstetic.com"
-      }
-    ];
+    const databaseGroups = Array.from({ length: 200 }, () => ({
+      RazonSocial: 'LABORATORIOS HIGIETEX S.A.S',
+      EmailsString: 'ptic2@newstetic.com'
+    }));
 
     // Transformar al formato requerido por el worker
     const emailGroups = this.batchProcessor.transformDatabaseGroups(databaseGroups);
@@ -41,12 +39,14 @@ export class EmailService {
     
     // Procesar cada lote con pausa entre ellos
     for (let i = 0; i < batches.length; i++) {
-      
+      this.logger.log(`🚀 Procesando lote ${i + 1} de ${batches.length} (${batches[i].length} grupos)`);
       await this.workerManager.processEmailBatch(batches[i], i + 1);
       
       // Pausa entre lotes para evitar sobrecarga del servidor SMTP
-      if (i < batches.length - 1) 
+      if (i < batches.length - 1) {
+        this.logger.log(`⏸️ Pausa de 2s antes del siguiente lote...`);
         await this.batchProcessor.sleep(2000);
+      }
       
     }
 

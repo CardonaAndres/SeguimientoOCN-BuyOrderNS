@@ -1,3 +1,4 @@
+const { logError } = require('./utils/logger');
 const { parentPort, workerData } = require('worker_threads');
 const { createMagicToken } = require('./utils/magicToken');
 const { generatePendingOrdersTemplate } = require('./utils/generatePendingOrdersTemplate');
@@ -64,10 +65,14 @@ async function sendGroupedEmails(emailGroups, batchNumber) {
       await new Promise(resolve => setTimeout(resolve, 1000));
       
     } catch (error) {
-      errors.push({
-        emails: group.emails,
-        error: error.message
-      });
+        const errObj = {
+          emails: group.emails,
+          error: error.message
+        };
+
+        errors.push(errObj);
+
+        await logError(`${group.emails.join(', ')} -> ${error.message}`);
     }
   }
 
