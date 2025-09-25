@@ -4,6 +4,7 @@ import { EmailWorkerManager } from './utils/email-worker.manager';
 import { BatchProcessorService } from './services/batch-processor.service';
 import { DatabaseService } from 'src/app/database/database.service';
 import { DatabaseEmailGroup } from './interfaces/email.interfaces';
+import { PaginationDto } from 'src/app/dtos/pagination.dto';
 
 @Injectable()
 export class EmailService {
@@ -51,5 +52,36 @@ export class EmailService {
     }
 
     this.logger.log('Envío masivo completado');
+  }
+
+  async getEmailLogs(pagination: PaginationDto){
+    const conn = await this.dbService.connect(process.env.DB_BUYORDER_NAME || 'localhost');
+
+    const resultLogs = await conn?.request()
+      .input('page', pagination.page)
+      .input('limit', pagination.limit)
+      .query(`
+        SELECT 
+          email_log_id, 
+          estado, 
+          error_mensaje,
+          FORMAT(fecha, 'yyyy-MM-dd hh:mm:ss tt') AS fecha
+        FROM buyorder_db.dbo.email_logs ORDER BY fecha DESC 
+        OFFSET (@page - 1) * @limit ROWS FETCH NEXT @limit ROWS ONLY;
+      `);
+
+    const resultTotalLogs = await conn?.request().query(`
+      SELECT COUNT(*) AS totalLogs FROM buyorder_db.dbo.email_logs;
+    `);
+
+    return {
+      logs: resultLogs?.recordsets[0] || [], 
+      meta: {
+        page: pagination.page,
+        limit: pagination.limit,
+        totalLogs: resultTotalLogs?.recordset[0].totalLogs || 0,
+        totalPages: Math.ceil((resultTotalLogs?.recordset[0].totalLogs || 0) / pagination.limit)
+      }
+    }
   }
 }
