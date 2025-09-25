@@ -65,8 +65,8 @@ export class EmailWorkerManager {
    */
   private getWorkerPath(): string {
     return process.env.NODE_ENV === 'production' 
-      ? path.join(__dirname, '..', 'workers', 'email-worker.js')
-      : path.join(process.cwd(), 'src', 'email', 'workers', 'email-worker.js');
+      ? path.join(__dirname, '..', 'workers', 'email-mass-worker.js')
+      : path.join(process.cwd(), 'src', 'email', 'workers', 'email-mass-worker.js');
   }
 
   /**

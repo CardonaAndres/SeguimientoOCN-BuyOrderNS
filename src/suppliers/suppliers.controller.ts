@@ -1,10 +1,10 @@
-import { Controller, Get, Query, UseGuards } from '@nestjs/common';
 import { SuppliersService } from './suppliers.service';
 import { PaginationDto } from 'src/app/dtos/pagination.dto';
 import { errorHandler } from 'src/app/handlers/error.handler';
 import { AuthGuard } from 'src/auth/guards/auth.guard';
 import { SearchSuppliersDto } from './dto/search-suppliers.dto';
 import { ApiBearerAuth, ApiOperation } from '@nestjs/swagger';
+import { Controller, Get, Param, Query, UseGuards } from '@nestjs/common';
 
 @ApiBearerAuth()
 @UseGuards(AuthGuard)
@@ -33,6 +33,19 @@ export class SuppliersController {
   async getSearchSuppliers(@Query() searchSuppliersDto: SearchSuppliersDto){
     try {
        return await this.suppliersService.getSearchSuppliers(searchSuppliersDto);
+    } catch (err) {
+      errorHandler(err);
+    }
+  }
+
+  @Get("/:supplier/orders")
+  @ApiOperation({
+    summary: 'Buscar órdenes de un proveedor con pendientes',
+    description: 'Permite buscar las órdenes asociadas a un proveedor que tengan órdenes o procesos pendientes.',
+  })
+  async getSupplierOrders(@Param('supplier') supplier: string){
+    try {
+      return await this.suppliersService.getSupplierOrders(supplier);
     } catch (err) {
       errorHandler(err);
     }

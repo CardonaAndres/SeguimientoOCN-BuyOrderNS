@@ -27,7 +27,7 @@ export class EmailService {
     const databaseGroups = [
       {
         RazonSocial: "LABORATORIOS HIGIETEX S.A.S",
-        EmailsString: "amjimenez@newstetic.com,ptic2@newstetic.com"
+        EmailsString: "ptic2@newstetic.com"
       }
     ];
 

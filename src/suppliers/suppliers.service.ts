@@ -1,10 +1,11 @@
 import * as mssql from 'mssql';
-import * as queries from './queries/queries';
 import { Injectable } from '@nestjs/common';
-import { DatabaseService } from 'src/app/database/database.service';
-import { PaginationDto } from 'src/app/dtos/pagination.dto'
+import * as queries from './queries/queries';
 import { UtilClass } from 'src/app/utils/util';
+import { PaginationDto } from 'src/app/dtos/pagination.dto'
 import { SearchSuppliersDto } from './dto/search-suppliers.dto';
+import { DatabaseService } from 'src/app/database/database.service';
+import * as npoQueries from '../purchase-orders/queries/npo.queries';
 
 @Injectable()
 export class SuppliersService {
@@ -69,6 +70,22 @@ export class SuppliersService {
         total: totalResults?.recordset[0].totalSuppliers,
         totalPages: Math.ceil((totalResults?.recordset[0].totalSuppliers || 0) / searchSuppliersDto.limit)
       }
+    }
+  }
+
+  async getSupplierOrders(supplier: string){
+    const conn = await this.dbService.connect(process.env.DB_COMP_NAME || 'localhost');
+    const npos = await conn?.request()
+    .input('supplier', mssql.VarChar, supplier)
+    .query(`${npoQueries.getAllNpOrders} 
+      AND proveedor.f200_razon_social = @supplier
+    `);
+
+    npos?.recordset.map(order => order.emails = UtilClass.parseEmailList(order.EmailProveedor));
+
+    return {
+      supplierName: supplier,
+      npos: npos?.recordset
     }
   }
 }
