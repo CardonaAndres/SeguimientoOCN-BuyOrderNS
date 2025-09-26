@@ -6,6 +6,7 @@ import { AuthModule } from './auth/auth.module';
 import { SuppliersModule } from './suppliers/suppliers.module';
 import { EmailModule } from './email/email.module';
 import { SupplierOrdersModule } from './supplier-orders/supplier-orders.module';
+import { UsersAllowedModule } from './users-allowed/users-allowed.module';
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { SupplierOrdersModule } from './supplier-orders/supplier-orders.module';
     SuppliersModule,
     EmailModule,
     SupplierOrdersModule,
+    UsersAllowedModule,
   ],
   controllers: [],
   providers: [],
