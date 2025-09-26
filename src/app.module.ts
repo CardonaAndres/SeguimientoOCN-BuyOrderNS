@@ -7,6 +7,7 @@ import { SuppliersModule } from './suppliers/suppliers.module';
 import { EmailModule } from './email/email.module';
 import { SupplierOrdersModule } from './supplier-orders/supplier-orders.module';
 import { UsersAllowedModule } from './users-allowed/users-allowed.module';
+import { MessagesModule } from './messages/messages.module';
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import { UsersAllowedModule } from './users-allowed/users-allowed.module';
     EmailModule,
     SupplierOrdersModule,
     UsersAllowedModule,
+    MessagesModule,
   ],
   controllers: [],
   providers: [],
