@@ -76,8 +76,17 @@ export class SupplierOrdersController {
     }
   }
 
+  @Get('/commets/item/:token/:itemID')
+  async getOrderItemsComments(@Param('itemID') itemID: string){
+    try {
+      return await this.supplierOrdersService.getOrderItemsComments(itemID)
+    } catch (err) {
+      errorHandler(err)
+    }
+  }
+  
   @Post('/:token')
-  async sendComment(@Body() comment: SendCommentDTO, @Req() req: SupplierRequest){
+  async sendComment(@Body() comment: SendCommentDTO, @Req() req: SupplierRequest){ 
     try {
       return await this.supplierOrdersService.sendComment(comment, req);
     } catch (err) {

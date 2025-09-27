@@ -53,6 +53,31 @@ export class SupplierOrdersService {
       }
   }
 
+  async getOrderItemsComments(itemID: string){
+    const conn = await this.dbService.connect(process.env.DB_BUYORDER_NAME || 'localhost');
+    const result = await conn?.request()
+    .input('itemID', mssql.VarChar, itemID)
+    .query(`
+      SELECT  
+          ic.mensaje_id,
+          ic.item_comentario_id,
+          ic.item_id,
+          ic.comentario,
+          FORMAT(ic.fecha, 'yyyy-MM-dd hh:mm:ss tt') AS fecha,
+          me.nombre AS tipoMensaje,
+          me.descripcion AS descripcionTipoMensaje
+      FROM buyorder_db.dbo.item_comentarios ic
+      INNER JOIN buyorder_db.dbo.mensajes me 
+      ON ic.mensaje_id = me.mensaje_id
+      WHERE ic.item_id = @itemID
+    `);
+
+    return {
+      message: 'Todos los comentarios de del item: '  + itemID,
+      comments: result?.recordset
+    }
+  }
+
   async sendComment(comment: SendCommentDTO, req: SupplierRequest){
     const { razonSocial } = req.supplier;
     const { itemID, messageID, commentText } = comment;
