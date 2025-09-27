@@ -3,8 +3,9 @@ import { ApiParam, ApiResponse } from '@nestjs/swagger';
 import { errorHandler } from 'src/app/handlers/error.handler';
 import { SupplierOrdersService } from './supplier-orders.service';
 import { MagicTokenUtil } from 'src/email/utils/magic-token.util';
-import { Controller, Get, Param, UseGuards, Req } from '@nestjs/common';
+import { Controller, Get, Param, UseGuards, Req, Post, Body } from '@nestjs/common';
 import type { SupplierRequest } from './interfaces/supplier-request.interface';
+import { SendCommentDTO } from './dto/send-comment.dto';
 
 @UseGuards(TokenGuard) 
 @Controller('supplier-orders')
@@ -70,6 +71,15 @@ export class SupplierOrdersController {
   async findNpoItems(@Param('consec_docto') id: string) {
     try {
       return await this.supplierOrdersService.getNpoItems(id);
+    } catch (err) {
+      errorHandler(err);
+    }
+  }
+
+  @Post('/:token')
+  async sendComment(@Body() comment: SendCommentDTO, @Req() req: SupplierRequest){
+    try {
+      return await this.supplierOrdersService.sendComment(comment, req);
     } catch (err) {
       errorHandler(err);
     }

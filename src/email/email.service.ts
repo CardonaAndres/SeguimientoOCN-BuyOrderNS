@@ -27,7 +27,7 @@ export class EmailService {
 
     const databaseGroups = Array.from({ length: 200 }, () => ({
       RazonSocial: 'LABORATORIOS HIGIETEX S.A.S',
-      EmailsString: 'ptic2@newstetic.com'
+      EmailsString: 'ptic2@newstetic.com,pticdos@gmail.com'
     }));
 
     // Transformar al formato requerido por el worker
