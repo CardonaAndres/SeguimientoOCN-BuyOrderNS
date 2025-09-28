@@ -52,6 +52,10 @@ export class SuppliersController {
   }
 
   @Get('/messages')
+  @ApiOperation({
+    summary: 'Obtener mensajes de proveedores',
+    description: 'Devuelve un listado paginado de mensajes relacionados con los proveedores.',
+  })
   async getSuppliersMessages(@Query() pagination: PaginationDto){
     try {
       return await this.suppliersService.getSuppliersMessages(pagination);
@@ -60,7 +64,11 @@ export class SuppliersController {
     }
   }
 
-  @Get('/messages/search/')
+  @Get('/messages/search')
+  @ApiOperation({
+    summary: 'Buscar mensajes de proveedores',
+    description: 'Permite buscar mensajes asociados a los proveedores usando criterios de búsqueda.',
+  })
   async getSuppliersMessagesBySearch(@Query() searchSupplierMessages: SearchSuppliersDto){
     try {
       return await this.suppliersService.getSuppliersMessagesBySearch(searchSupplierMessages);

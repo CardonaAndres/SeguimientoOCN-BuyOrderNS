@@ -1,5 +1,5 @@
 import { TokenGuard } from './guards/token.guard';
-import { ApiParam, ApiResponse } from '@nestjs/swagger';
+import { ApiOperation, ApiParam, ApiResponse } from '@nestjs/swagger';
 import { errorHandler } from 'src/app/handlers/error.handler';
 import { SupplierOrdersService } from './supplier-orders.service';
 import { MagicTokenUtil } from 'src/email/utils/magic-token.util';
@@ -77,6 +77,24 @@ export class SupplierOrdersController {
   }
 
   @Get('/commets/item/:token/:itemID')
+  @ApiOperation({
+    summary: 'Obtener comentarios de un ítem',
+    description: 'Devuelve los comentarios asociados a un ítem específico dentro de una orden de compra.',
+  })
+  @ApiParam({
+    name: 'token',
+    description: 'Token mágico de validación del proveedor',
+    type: String,
+  })
+  @ApiParam({
+    name: 'itemID',
+    description: 'Identificador del ítem dentro de la orden de compra',
+    type: String,
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Listado de comentarios asociados al ítem.',
+  })
   async getOrderItemsComments(@Param('itemID') itemID: string){
     try {
       return await this.supplierOrdersService.getOrderItemsComments(itemID)
@@ -86,6 +104,23 @@ export class SupplierOrdersController {
   }
   
   @Post('/:token')
+  @ApiOperation({
+    summary: 'Enviar comentario de proveedor',
+    description: 'Permite a un proveedor enviar un comentario relacionado a una orden de compra o ítem.',
+  })
+  @ApiParam({
+    name: 'token',
+    description: 'Token mágico de validación del proveedor',
+    type: String,
+  })
+  @ApiResponse({
+    status: 201,
+    description: 'Comentario enviado exitosamente.',
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'Error en los datos enviados.',
+  })
   async sendComment(@Body() comment: SendCommentDTO, @Req() req: SupplierRequest){ 
     try {
       return await this.supplierOrdersService.sendComment(comment, req);
