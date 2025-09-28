@@ -42,4 +42,14 @@ export class PurchaseOrdersController {
     }
   }
 
+  @Get('/one/item/:itemID')
+  @ApiResponse({ status: 200, description: 'Item de una órden de compra nacional.' })
+  async findItemByID(@Param('itemID') itemID: string){
+    try {
+      return await this.purchaseOrdersService.findItemByID(itemID)
+    } catch (err) {
+      errorHandler(err);
+    }
+  }
+
 }

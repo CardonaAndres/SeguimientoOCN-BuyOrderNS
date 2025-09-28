@@ -1,11 +1,11 @@
 import * as mssql from 'mssql';
-import * as queries from './queries/npo.queries';
-import { BadRequestException, Injectable } from '@nestjs/common';
-import { DatabaseService } from 'src/app/database/database.service';
-import { PaginationDto } from 'src/app/dtos/pagination.dto';
-import { SearchDTO } from 'src/app/dtos/search.dto';
-import { Time } from 'src/app/types/global.types';
 import { UtilClass } from '../app/utils/util';
+import * as queries from './queries/npo.queries';
+import { Time } from 'src/app/types/global.types';
+import { SearchDTO } from 'src/app/dtos/search.dto';
+import { PaginationDto } from 'src/app/dtos/pagination.dto';
+import { DatabaseService } from 'src/app/database/database.service';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 
 @Injectable()
 export class PurchaseOrdersService {
@@ -132,6 +132,28 @@ export class PurchaseOrdersService {
       meta: {
         total: resultsItems?.recordset.length
       }
+    }
+  }
+
+  async findItemByID(itemID: string){
+    const conn = await this.dbService.connect(process.env.DB_COMP_NAME || 'localhost');
+    const result = await conn?.request()
+    .input('itemID', mssql.VarChar, itemID)
+    .query(`${queries.getOrdersItems} AND f120_rowid = @itemID ORDER BY items.f120_referencia;`);
+
+    if(!result?.recordset[0])
+      throw new NotFoundException('El item no ha sido encontrado')
+
+    result?.recordset.map(item => {
+      item.Referencia = item.Referencia.trim();
+      item.CodigoProveedor = item.CodigoProveedor.trim();
+      item.CodigoBodega = item.CodigoBodega.trim();
+      item.emails = UtilClass.parseEmailList(item.EmailProveedor)
+    });
+
+    return {
+      message: 'Item encontrado correctamente',
+      item: result?.recordset[0],
     }
   }
 
