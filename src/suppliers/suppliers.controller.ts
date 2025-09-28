@@ -51,4 +51,21 @@ export class SuppliersController {
     }
   }
 
+  @Get('/messages')
+  async getSuppliersMessages(@Query() pagination: PaginationDto){
+    try {
+      return await this.suppliersService.getSuppliersMessages(pagination);
+    } catch (err) {
+      errorHandler(err);
+    }
+  }
+
+  @Get('/messages/search/')
+  async getSuppliersMessagesBySearch(@Query() searchSupplierMessages: SearchSuppliersDto){
+    try {
+      return await this.suppliersService.getSuppliersMessagesBySearch(searchSupplierMessages);
+    } catch (err) {
+      errorHandler(err);
+    }
+  }
 }

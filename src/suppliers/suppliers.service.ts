@@ -88,4 +88,100 @@ export class SuppliersService {
       npos: npos?.recordset
     }
   }
+
+  async getSuppliersMessages(pagination: PaginationDto){
+    const conn = await this.dbService.connect(process.env.DB_BUYORDER_NAME || 'localhost'); 
+    const results = await conn?.request()
+      .input('page', mssql.Int, pagination.page)
+      .input('limit', mssql.Int, pagination.limit)
+      .query(`SELECT  
+            ic.mensaje_id,
+            ic.item_comentario_id,
+            ic.item_id,
+            ic.comentario,
+            FORMAT(ic.fecha, 'yyyy-MM-dd hh:mm:ss tt') AS fecha,
+            me.nombre AS tipoMensaje,
+            me.descripcion AS descripcionTipoMensaje
+        FROM buyorder_db.dbo.item_comentarios ic
+        INNER JOIN buyorder_db.dbo.mensajes me 
+        ON ic.mensaje_id = me.mensaje_id 
+        ORDER BY ic.fecha DESC 
+        OFFSET (@page - 1) * @limit ROWS FETCH NEXT @limit ROWS ONLY;
+      `);
+
+    const totalResults = await conn?.request()
+      .query(`
+        SELECT COUNT(*) as total FROM buyorder_db.dbo.item_comentarios ic
+        INNER JOIN buyorder_db.dbo.mensajes me ON ic.mensaje_id = me.mensaje_id;
+      `);
+
+    return {
+      message: 'Los mensajes de nuestros proveedores',
+      comments: results?.recordset,
+      meta: {
+        page: pagination.page,
+        limit: pagination.limit,
+        total: totalResults?.recordset[0].total ?? 0,
+        totalPages: Math.ceil(totalResults?.recordset[0].total / pagination.limit),
+      }
+    }
+  }
+
+  async getSuppliersMessagesBySearch(searchSupplierMessages: SearchSuppliersDto){
+    const { page, limit, value } = searchSupplierMessages;
+    const conn = await this.dbService.connect(process.env.DB_BUYORDER_NAME || 'localhost');
+
+    const results = await conn?.request()
+    .input('page', mssql.Int, page)
+    .input('limit', mssql.Int, limit)
+    .input('value', mssql.VarChar, `%${value}%`)
+    .query(`
+      SELECT  
+          ic.mensaje_id,
+          ic.item_comentario_id,
+          ic.item_id,
+          ic.comentario,
+          FORMAT(ic.fecha, 'yyyy-MM-dd hh:mm:ss tt') AS fecha,
+          me.nombre AS tipoMensaje,
+          me.descripcion AS descripcionTipoMensaje
+      FROM buyorder_db.dbo.item_comentarios ic
+      INNER JOIN buyorder_db.dbo.mensajes me 
+          ON ic.mensaje_id = me.mensaje_id 
+      WHERE 
+          CAST(ic.item_id AS NVARCHAR) LIKE @value OR
+          ic.comentario LIKE @value OR
+          FORMAT(ic.fecha, 'yyyy-MM-dd hh:mm:ss tt') LIKE @value OR
+          me.nombre LIKE @value OR
+          me.descripcion LIKE @value
+      ORDER BY ic.fecha DESC 
+      OFFSET (@page - 1) * @limit ROWS FETCH NEXT @limit ROWS ONLY;
+    `);
+
+    const totalResults = await conn?.request()
+    .input('value', mssql.VarChar, `%${value}%`)
+    .query(`
+      SELECT COUNT(*) as total 
+      FROM buyorder_db.dbo.item_comentarios ic
+      INNER JOIN buyorder_db.dbo.mensajes me 
+          ON ic.mensaje_id = me.mensaje_id
+      WHERE 
+          CAST(ic.item_id AS NVARCHAR) LIKE @value OR
+          ic.comentario LIKE @value OR
+          FORMAT(ic.fecha, 'yyyy-MM-dd hh:mm:ss tt') LIKE @value OR
+          me.nombre LIKE @value OR
+          me.descripcion LIKE @value;
+    `);
+
+   return {
+      message: `Resultados de búsqueda para "${value}"`,
+      comments: results?.recordset,
+      meta: {
+        page,
+        limit,
+        total: totalResults?.recordset[0].total ?? 0,
+        totalPages: Math.ceil(totalResults?.recordset[0].total / limit),
+      }
+    }
+  }
+
 }
