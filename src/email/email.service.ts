@@ -23,15 +23,19 @@ export class EmailService {
      .query<DatabaseEmailGroup[]>(`USE UNOEE ${queries.getAllSuppliers} ORDER BY RazonSocial`);
 
      // ! databaseGroups (Grupo de correos) para despliegue (Correos reales)
-    const databaseGroups: DatabaseEmailGroup[] = results?.recordset || [];
+    // const databaseGroups: DatabaseEmailGroup[] = results?.recordset || [];
 
     // Todo: databaseGroups (Grupo de correos) para pruebas en desarrollo
-    /*
-      const databaseGroups = Array.from({ length: 200 }, () => ({
+    const databaseGroups: DatabaseEmailGroup[] = [
+      {
         RazonSocial: 'LABORATORIOS HIGIETEX S.A.S',
-        EmailsString: 'ptic2@newstetic.com,pticdos@gmail.com'
-      }));
-    */
+        EmailsString: 'ptic2@newstetic.com,ptic@newstetic.com,pticdos@gmail.com'
+      },
+      {
+        RazonSocial: 'A.F.R. S.A.S.',
+        EmailsString: 'ptic2@newstetic.com,pticdos@gmail.com,yguzman@newstetic.com,amjimenez@newstetic.com'
+      }
+    ];
 
     // Transformar al formato requerido por el worker
     const emailGroups = this.batchProcessor.transformDatabaseGroups(databaseGroups);
